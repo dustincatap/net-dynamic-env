@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>11</LangVersion>
+        <Configurations>DevDebug;DevRelease;ProdRelease;ProdDebug</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <!-- Build Types -->
+    <PropertyGroup Condition="$(Configuration.Contains('Debug'))">
+        <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+        <DebugSymbols>true</DebugSymbols>
+        <DefineDebug>true</DefineDebug>
+        <DebugType>full</DebugType>
+        <DefineTrace>true</DefineTrace>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(Configuration.Contains('Release'))">
+        <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+        <DebugSymbols>true</DebugSymbols>
+        <DefineDebug>false</DefineDebug>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <DefineTrace>true</DefineTrace>
+    </PropertyGroup>
+
+    <!-- Environment Types -->
+    <PropertyGroup Condition="$(Configuration.Contains('Dev'))">
+        <AppSettingsFile>appsettings.dev.json</AppSettingsFile>
+        <DefineConstants>$(DefineConstants);DEV;APP_SETTINGS_FILE=$(AppSettingsFile)</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(Configuration.Contains('Prod'))">
+        <DefineConstants>$(DefineConstants);PROD</DefineConstants>
+        <AppSettingsFile>appsettings.prod.json</AppSettingsFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="$(AppSettingsFile)" />
+    </ItemGroup>
+
+    <Target Name="ReadDefineConstants" BeforeTargets="Build">
+        <Message Importance="high" Text="DefineConstants: $(DefineConstants)" />
+    </Target>
+
+    <Target Name="ReadJson" BeforeTargets="Build">
+        <JsonPeek ContentPath="$(AppSettingsFile)" Query="$.AppEnv">
+            <Output TaskParameter="Result" PropertyName="AppEnv" />
+        </JsonPeek>
+        <Message Importance="high" Text="AppEnv: $(AppEnv)" />
+    </Target>
+    
+    <Target Name="SetMySettingsAttribute" DependsOnTargets="ReadJson">
+        <ItemGroup>
+            <AssemblyAttribute Include="ConsoleApp.MySettingsAttribute">
+                <_Parameter1>sas</_Parameter1>
+                <_Parameter2>$(MyCustomSetting)</_Parameter2>
+                <_Parameter3>$(MyOtherSetting)</_Parameter3>
+            </AssemblyAttribute>
+        </ItemGroup>
+    </Target>
+
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="7.0.1" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="JsonPeek" Version="1.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove=".gitignore" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "ConsoleApp.csproj", "{2AF3947B-2E93-4A6B-B416-AB371209FE0D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DevDebug|Any CPU = DevDebug|Any CPU
+		DevRelease|Any CPU = DevRelease|Any CPU
+		ProdRelease|Any CPU = ProdRelease|Any CPU
+		ProdDebug|Any CPU = ProdDebug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2AF3947B-2E93-4A6B-B416-AB371209FE0D}.DevRelease|Any CPU.ActiveCfg = DevRelease|Any CPU
+		{2AF3947B-2E93-4A6B-B416-AB371209FE0D}.DevRelease|Any CPU.Build.0 = DevRelease|Any CPU
+		{2AF3947B-2E93-4A6B-B416-AB371209FE0D}.DevDebug|Any CPU.ActiveCfg = DevDebug|Any CPU
+		{2AF3947B-2E93-4A6B-B416-AB371209FE0D}.DevDebug|Any CPU.Build.0 = DevDebug|Any CPU
+		{2AF3947B-2E93-4A6B-B416-AB371209FE0D}.ProdRelease|Any CPU.ActiveCfg = ProdRelease|Any CPU
+		{2AF3947B-2E93-4A6B-B416-AB371209FE0D}.ProdRelease|Any CPU.Build.0 = ProdRelease|Any CPU
+		{2AF3947B-2E93-4A6B-B416-AB371209FE0D}.ProdDebug|Any CPU.ActiveCfg = ProdDebug|Any CPU
+		{2AF3947B-2E93-4A6B-B416-AB371209FE0D}.ProdDebug|Any CPU.Build.0 = ProdDebug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {599D2420-D7EF-45A7-9F15-8C481B763FD2}
+	EndGlobalSection
+EndGlobal
