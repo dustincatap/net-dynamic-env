@@ -11,40 +11,39 @@ public static class Program
 {
     static void Main(string[] args)
     {
+        // Get appsettings.json file name
+        var entryAssembly = Assembly.GetEntryAssembly();
+        var mySettingsAttribute = entryAssembly?.GetCustomAttribute<AppSettingsFileAttribute>();
+        Console.WriteLine($"AppSettingsFile Name: " + mySettingsAttribute?.Name);
+
+        // Load appsettings.json file as part of configuration
         var executingAssembly = Assembly.GetExecutingAssembly();
-        using var jsonStream = executingAssembly
-#if PROD
-            .GetManifestResourceStream("ConsoleApp.appsettings.prod.json");
-#else
-            .GetManifestResourceStream("ConsoleApp.appsettings.dev.json");
-#endif
-        var config = new ConfigurationBuilder()
-            .AddJsonStream(jsonStream)
-            .Build();
+        using (var jsonStream = executingAssembly.GetManifestResourceStream($"ConsoleApp.{mySettingsAttribute?.Name}"))
+        {
+            if (jsonStream == null)
+            {
+                throw new Exception($"Could not find appsettings.json file: {mySettingsAttribute?.Name}");
+            }
 
-        // get `APP_SETTINGS_FILE` constant value
-        var appSettingsFile = Environment.GetEnvironmentVariable("APP_SETTINGS_FILE");
-        Console.WriteLine($"appSettingsFile: {appSettingsFile}");
-
+            var config = new ConfigurationBuilder()
+                .AddJsonStream(jsonStream)
+                .Build();
+            
+            var mySettings = config.Get<MySettings>();
+            Console.WriteLine($"AppEnv: " + mySettings?.AppEnv);
+        }
 
         // check if debug or release
         var isDebug = executingAssembly.GetCustomAttribute<DebuggableAttribute>()?.IsJITTrackingEnabled ?? false;
         Console.WriteLine("Is Debug: " + isDebug);
-        
-        // get `MySettingsAttribute` attribute value
-        var entryAssembly = Assembly.GetEntryAssembly();
-        var mySettingsAttribute = entryAssembly?.GetCustomAttribute<MySettingsAttribute>();
-        Console.WriteLine(mySettingsAttribute?.AppEnv);
 
 
-        var mySettings = config.Get<MySettings>();
-        Console.WriteLine(mySettings.AppEnv);
 
-        // var serviceCollection = new ServiceCollection();
-        // var containerBuilder = new ContainerBuilder();
-        // containerBuilder.Populate(serviceCollection);
-        // var container = containerBuilder.Build();
-        // var serviceProvider = new AutofacServiceProvider(container);
+        var serviceCollection = new ServiceCollection();
+        var containerBuilder = new ContainerBuilder();
+        containerBuilder.Populate(serviceCollection);
+        var container = containerBuilder.Build();
+        var serviceProvider = new AutofacServiceProvider(container);
     }
 }
 
@@ -58,18 +57,12 @@ public class MySettings
 }
 
 [AttributeUsage(AttributeTargets.Assembly)]
-public class MySettingsAttribute : Attribute
+public class AppSettingsFileAttribute : Attribute
 {
-    public MySettingsAttribute(string appEnv, string myCustomSetting, string myOtherSetting)
+    public AppSettingsFileAttribute(string name)
     {
-        AppEnv = appEnv;
-        MyCustomSetting = myCustomSetting;
-        MyOtherSetting = myOtherSetting;
+        Name = name;
     }
 
-    public string AppEnv { get; }
-
-    public string MyCustomSetting { get; }
-
-    public string MyOtherSetting { get; }
+    public string Name { get; }
 }
